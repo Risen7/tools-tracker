@@ -12,9 +12,10 @@ interface Props {
 }
 
 const ToolList: React.FC<Props> = ({ tools, onEdit, onDelete, onAssign, onReturn }) => {
-  if (tools.length === 0) return <div>No tools yet</div>;
+  if (tools.length === 0) return <div className="text-gray-500">No tools yet</div>;
+
   return (
-    <div className="tool-list">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {tools.map(t => (
         <ToolCard key={t.id} tool={t} onEdit={onEdit} onDelete={onDelete} onAssign={onAssign} onReturn={onReturn} />
       ))}
