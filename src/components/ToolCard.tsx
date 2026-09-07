@@ -20,6 +20,9 @@ const ToolCard: React.FC<Props> = ({ tool, onEdit, onDelete, onAssign, onReturn 
       <div>
         <h3 className="text-lg font-semibold text-gray-800">{tool.name}</h3>
         <p className="text-sm text-gray-500">{tool.category}{tool.serial && ` • ${tool.serial}`}</p>
+        <p className="mt-2 text-sm text-gray-600">
+          <span className="font-medium">Borrower:</span> {tool.assignedTo || "Unassigned"}
+        </p>
         {tool.notes && <p className="mt-2 text-sm text-gray-600">{tool.notes}</p>}
       </div>
 
