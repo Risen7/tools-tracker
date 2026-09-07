@@ -64,6 +64,12 @@ const App: React.FC = () => {
       : tool));
   };
 
+  const calibrationOk = (id: string) => {
+    setTools(prev => prev.map(tool => tool.id === id
+      ? { ...tool, status: "available", dateExpiry: undefined, assignedTo: undefined, dateIssued: undefined, updatedAt: new Date().toISOString() }
+      : tool));
+  };
+
   const filtered = useMemo(() => tools.filter(tool => {
     if (filter !== "all" && tool.status !== filter) return false;
     if (!query) return true;
@@ -109,7 +115,7 @@ return (
 
         <section className="md:col-span-2">
           <h2 className="text-lg font-medium mb-3">Inventory</h2>
-          <ToolList tools={filtered} onEdit={t => setEditing(t)} onDelete={deleteTool} onAssign={t => setAssigning(t)} onReturn={returnTool} />
+          <ToolList tools={filtered} onEdit={t => setEditing(t)} onDelete={deleteTool} onAssign={t => setAssigning(t)} onReturn={returnTool} onCalibrationOk={calibrationOk} />
         </section>
       </main>
     </div>

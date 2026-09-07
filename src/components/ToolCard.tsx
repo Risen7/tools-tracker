@@ -8,9 +8,10 @@ interface Props {
   onDelete: (id: string) => void;
   onAssign: (t: Tool) => void;
   onReturn: (id: string) => void;
+  onCalibrationOk: (id: string) => void;
 }
 
-const ToolCard: React.FC<Props> = ({ tool, onEdit, onDelete, onAssign, onReturn }) => {
+const ToolCard: React.FC<Props> = ({ tool, onEdit, onDelete, onAssign, onReturn, onCalibrationOk }) => {
   const statusColor = tool.status === "available" ? "bg-green-100 text-green-800" :
                       tool.status === "in-use" ? "bg-yellow-100 text-yellow-800" :
                       "bg-red-100 text-red-800";
@@ -39,6 +40,8 @@ const ToolCard: React.FC<Props> = ({ tool, onEdit, onDelete, onAssign, onReturn 
           <button onClick={() => onDelete(tool.id)} className="text-red-600 hover:underline text-sm">Delete</button>
           {tool.status === "available" ? (
             <button onClick={() => onAssign(tool)} className="ml-2 inline-flex items-center px-2 py-1 bg-indigo-600 text-white text-sm rounded">Assign</button>
+          ) : tool.status === "for calibration" ? (
+            <button onClick={() => onCalibrationOk(tool.id)} className="ml-2 inline-flex items-center px-2 py-1 bg-green-600 text-white text-sm rounded">Calibration OK</button>
           ) : (
             <button onClick={() => onReturn(tool.id)} className="ml-2 inline-flex items-center px-2 py-1 bg-green-600 text-white text-sm rounded">Return</button>
           )}
