@@ -23,6 +23,9 @@ const ToolCard: React.FC<Props> = ({ tool, onEdit, onDelete, onAssign, onReturn 
         <p className="mt-2 text-sm text-gray-600">
           <span className="font-medium">Borrower:</span> {tool.assignedTo || "Unassigned"}
         </p>
+        <p className="text-sm text-gray-600">
+          <span className="font-medium">Expiration:</span> {tool.dateExpiry || "Not set"}
+        </p>
         {tool.notes && <p className="mt-2 text-sm text-gray-600">{tool.notes}</p>}
       </div>
 

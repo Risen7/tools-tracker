@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import AssignModal from "./components/AssignModal";
 import ToolForm from "./components/ToolForm";
 import ToolList from "./components/ToolList";
@@ -8,6 +8,13 @@ import { Tool } from "./types/tool";
 
 const STORAGE_KEY = "tools-tracker-v1";
 
+const hasReachedExpiry = (dateExpiry?: string) => {
+  if (!dateExpiry) return false;
+  const today = new Date();
+  const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  return dateExpiry <= todayKey;
+};
+
 const App: React.FC = () => {
   const [tools, setTools] = useLocalStorage<Tool[]>(STORAGE_KEY, []);
   const [editing, setEditing] = useState<Tool | null>(null);
@@ -15,11 +22,28 @@ const App: React.FC = () => {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | Tool["status"]>("all");
 
-  const addOrUpdate = (tool: Tool) => {
+  useEffect(() => {
     setTools(prev => {
-      const exists = prev.find(item => item.id === tool.id);
-      if (exists) return prev.map(item => item.id === tool.id ? { ...item, ...tool } : item);
-      return [tool, ...prev];
+      let changed = false;
+      const updated = prev.map(tool => {
+        if (hasReachedExpiry(tool.dateExpiry) && tool.status !== "for calibration") {
+          changed = true;
+          return { ...tool, status: "for calibration" as const, updatedAt: new Date().toISOString() };
+        }
+        return tool;
+      });
+      return changed ? updated : prev;
+    });
+  }, [setTools]);
+
+  const addOrUpdate = (tool: Tool) => {
+    const toolToSave = hasReachedExpiry(tool.dateExpiry)
+      ? { ...tool, status: "for calibration" as const }
+      : tool;
+    setTools(prev => {
+      const exists = prev.find(item => item.id === toolToSave.id);
+      if (exists) return prev.map(item => item.id === toolToSave.id ? { ...item, ...toolToSave } : item);
+      return [toolToSave, ...prev];
     });
     setEditing(null);
   };
@@ -30,13 +54,13 @@ const App: React.FC = () => {
 
   const assignTool = (id: string, assignedTo: string) => {
     setTools(prev => prev.map(tool => tool.id === id
-      ? { ...tool, status: "in-use", assignedTo, dateIssued: new Date().toISOString(), updatedAt: new Date().toISOString() }
+      ? { ...tool, status: hasReachedExpiry(tool.dateExpiry) ? "for calibration" : "in-use", assignedTo, dateIssued: new Date().toISOString(), updatedAt: new Date().toISOString() }
       : tool));
   };
 
   const returnTool = (id: string) => {
     setTools(prev => prev.map(tool => tool.id === id
-      ? { ...tool, status: "available", assignedTo: undefined, dateIssued: undefined, updatedAt: new Date().toISOString() }
+      ? { ...tool, status: hasReachedExpiry(tool.dateExpiry) ? "for calibration" : "available", assignedTo: undefined, dateIssued: undefined, updatedAt: new Date().toISOString() }
       : tool));
   };
 
@@ -71,6 +95,7 @@ return (
             <option value="available">Available</option>
             <option value="in-use">In Use</option>
             <option value="repair">Repair</option>
+            <option value="for calibration">For Calibration</option>
           </select>
           <button onClick={exportCSV} className="px-3 py-2 bg-gray-800 text-white rounded-md">Export CSV</button>
         </div>

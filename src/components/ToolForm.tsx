@@ -8,6 +8,7 @@ const ToolForm: React.FC<Props> = ({ onSave, initial = {} }) => {
   const [name, setName] = useState(initial.name ?? "");
   const [category, setCategory] = useState(initial.category ?? "");
   const [serial, setSerial] = useState(initial.serial ?? "");
+  const [dateExpiry, setDateExpiry] = useState(initial.dateExpiry ?? "");
   const [notes, setNotes] = useState(initial.notes ?? "");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -19,6 +20,7 @@ const ToolForm: React.FC<Props> = ({ onSave, initial = {} }) => {
       category: category.trim(),
       serial: serial.trim() || undefined,
       status: initial.status ?? "available",
+      dateExpiry: dateExpiry || undefined,
       notes: notes.trim() || undefined,
       createdAt: initial.createdAt ?? now,
       updatedAt: now,
@@ -50,6 +52,12 @@ const ToolForm: React.FC<Props> = ({ onSave, initial = {} }) => {
       </div>
 
       <label className="block">
+        <span className="text-sm font-medium text-gray-700">Expiration date</span>
+        <input type="date" value={dateExpiry} onChange={e => setDateExpiry(e.target.value)}
+          className="mt-1 block w-full rounded-md border-gray-300 p-2 focus:ring-indigo-500 focus:border-indigo-500" />
+      </label>
+
+      <label className="block">
         <span className="text-sm font-medium text-gray-700">Notes</span>
         <textarea value={notes} onChange={e => setNotes(e.target.value)}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
@@ -60,7 +68,7 @@ const ToolForm: React.FC<Props> = ({ onSave, initial = {} }) => {
         <button type="submit" className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
           Save
         </button>
-        <button type="button" onClick={() => { setName(""); setCategory(""); setSerial(""); setNotes(""); }}
+        <button type="button" onClick={() => { setName(""); setCategory(""); setSerial(""); setDateExpiry(""); setNotes(""); }}
           className="inline-flex items-center px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50">
           Clear
         </button>

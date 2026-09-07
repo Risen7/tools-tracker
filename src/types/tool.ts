@@ -1,5 +1,5 @@
 // src/types/tool.ts
-export type ToolStatus = "available" | "in-use" | "repair";
+export type ToolStatus = "available" | "in-use" | "repair" | "for calibration";
 
 export interface Tool {
   id: string;
@@ -12,4 +12,5 @@ export interface Tool {
   notes?: string;
   createdAt: string;
   updatedAt?: string;
+  dateExpiry?: string;
 }
