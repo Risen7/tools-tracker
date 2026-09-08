@@ -9,7 +9,7 @@ interface Props {
   onDelete: (id: string) => void;
   onAssign: (t: Tool) => void;
   onReturn: (id: string) => void;
-  onCalibrationOk: (id: string) => void;
+  onCalibrationOk: (tool: Tool) => void;
 }
 
 const ToolList: React.FC<Props> = ({ tools, onEdit, onDelete, onAssign, onReturn, onCalibrationOk }) => {

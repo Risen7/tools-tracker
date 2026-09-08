@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import AssignModal from "./components/AssignModal";
 import ToolForm from "./components/ToolForm";
 import ToolList from "./components/ToolList";
+import CalibrationModal from "./components/CalibrationModal";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { toolsToCSV } from "./utils/csv";
 import { Tool } from "./types/tool";
@@ -19,6 +20,7 @@ const App: React.FC = () => {
   const [tools, setTools] = useLocalStorage<Tool[]>(STORAGE_KEY, []);
   const [editing, setEditing] = useState<Tool | null>(null);
   const [assigning, setAssigning] = useState<Tool | null>(null);
+  const [calibrating, setCalibrating] = useState<Tool | null>(null);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | Tool["status"]>("all");
 
@@ -64,9 +66,9 @@ const App: React.FC = () => {
       : tool));
   };
 
-  const calibrationOk = (id: string) => {
+  const calibrationOk = (id: string, dateExpiry: string) => {
     setTools(prev => prev.map(tool => tool.id === id
-      ? { ...tool, status: "available", dateExpiry: undefined, assignedTo: undefined, dateIssued: undefined, updatedAt: new Date().toISOString() }
+      ? { ...tool, status: "available", dateExpiry, assignedTo: undefined, dateIssued: undefined, updatedAt: new Date().toISOString() }
       : tool));
   };
 
@@ -115,7 +117,7 @@ return (
 
         <section className="md:col-span-2">
           <h2 className="text-lg font-medium mb-3">Inventory</h2>
-          <ToolList tools={filtered} onEdit={t => setEditing(t)} onDelete={deleteTool} onAssign={t => setAssigning(t)} onReturn={returnTool} onCalibrationOk={calibrationOk} />
+          <ToolList tools={filtered} onEdit={t => setEditing(t)} onDelete={deleteTool} onAssign={t => setAssigning(t)} onReturn={returnTool} onCalibrationOk={t => setCalibrating(t)} />
         </section>
       </main>
     </div>
@@ -133,6 +135,7 @@ return (
     )}
 
     <AssignModal tool={assigning} onClose={() => setAssigning(null)} onAssign={assignTool} />
+    <CalibrationModal tool={calibrating} onClose={() => setCalibrating(null)} onConfirm={calibrationOk} />
   </div>
 );
 
