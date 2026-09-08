@@ -15,17 +15,21 @@ const ToolCard: React.FC<Props> = ({ tool, onEdit, onDelete, onAssign, onReturn,
   const statusColor = tool.status === "available" ? "bg-green-100 text-green-800" :
                       tool.status === "in-use" ? "bg-yellow-100 text-yellow-800" :
                       "bg-red-100 text-red-800";
+  const today = new Date();
+  const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const isExpired = Boolean(tool.dateExpiry && tool.dateExpiry <= todayKey);
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col justify-between h-full">
+    <div className={`p-4 rounded-lg shadow-sm flex flex-col justify-between h-full border-l-4 ${isExpired ? "bg-red-50 border-red-500" : "bg-white border-transparent"}`}>
       <div>
         <h3 className="text-lg font-semibold text-gray-800">{tool.name}</h3>
         <p className="text-sm text-gray-500">{tool.category}{tool.serial && ` • ${tool.serial}`}</p>
         <p className="mt-2 text-sm text-gray-600">
           <span className="font-medium">Borrower:</span> {tool.assignedTo || "Unassigned"}
         </p>
-        <p className="text-sm text-gray-600">
+        <p className={`text-sm ${isExpired ? "font-semibold text-red-700" : "text-gray-600"}`}>
           <span className="font-medium">Expiration:</span> {tool.dateExpiry || "Not set"}
+          {isExpired && <span className="ml-2 uppercase tracking-wide">Expired</span>}
         </p>
         {tool.notes && <p className="mt-2 text-sm text-gray-600">{tool.notes}</p>}
       </div>
