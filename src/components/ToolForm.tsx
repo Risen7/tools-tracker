@@ -2,18 +2,33 @@
 import React, { useState } from "react";
 import { Tool } from "../types/tool";
 
-interface Props { onSave: (tool: Tool) => void; initial?: Partial<Tool>; }
+interface Props {
+  // Save a newly created or edited tool.
+  onSave: (tool: Tool) => void;
+  // Existing values used when editing a tool.
+  initial?: Partial<Tool>;
+}
 
+// Collects the fields needed to create or edit a tool.
 const ToolForm: React.FC<Props> = ({ onSave, initial = {} }) => {
+  // Store the tool name entered by the user.
   const [name, setName] = useState(initial.name ?? "");
+  // Store the category entered by the user.
   const [category, setCategory] = useState(initial.category ?? "");
+  // Store the optional serial number.
   const [serial, setSerial] = useState(initial.serial ?? "");
+  // Store the optional expiry date.
   const [dateExpiry, setDateExpiry] = useState(initial.dateExpiry ?? "");
+  // Store the optional notes.
   const [notes, setNotes] = useState(initial.notes ?? "");
 
+  // Validate the form event, build a tool record, and send it to the parent.
   const handleSubmit = (e: React.FormEvent) => {
+    // Prevent the browser from reloading the page.
     e.preventDefault();
+    // Use one timestamp for creation and update metadata.
     const now = new Date().toISOString();
+    // Convert form values into the application's Tool shape.
     const tool: Tool = {
       id: initial.id ?? String(Date.now()),
       name: name.trim(),
@@ -25,9 +40,11 @@ const ToolForm: React.FC<Props> = ({ onSave, initial = {} }) => {
       createdAt: initial.createdAt ?? now,
       updatedAt: now,
     };
+    // Let App decide whether to create or update the record.
     onSave(tool);
   };
 
+  // Render the tool input fields and form actions.
   return (
     <form onSubmit={handleSubmit} className="space-y-3 bg-white p-4 rounded-lg shadow-sm">
       <label className="block">

@@ -2,23 +2,35 @@ import React, { useState } from "react";
 import { Tool } from "../types/tool";
 
 interface Props {
+  // The tool currently being calibrated, or null when closed.
   tool: Tool | null;
+  // Close the dialog without saving.
   onClose: () => void;
+  // Save the new expiry date for the tool.
   onConfirm: (id: string, dateExpiry: string) => void;
 }
 
+// Requests a new expiry date after calibration is complete.
 const CalibrationModal: React.FC<Props> = ({ tool, onClose, onConfirm }) => {
+  // Store the newly entered expiry date.
   const [dateExpiry, setDateExpiry] = useState("");
 
+  // Render nothing when no tool is selected for calibration.
   if (!tool) return null;
 
+  // Submit the new expiry date and close the dialog.
   const submit = (e: React.FormEvent) => {
+    // Prevent the browser from submitting and reloading the page.
     e.preventDefault();
+    // Send the selected tool and date to App for persistence.
     onConfirm(tool.id, dateExpiry);
+    // Clear the field for the next calibration.
     setDateExpiry("");
+    // Close the dialog after saving.
     onClose();
   };
 
+  // Render the calibration date form.
   return (
     <div className="modal-backdrop">
       <div className="modal-panel">

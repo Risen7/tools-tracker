@@ -3,23 +3,35 @@ import React from "react";
 import { Tool } from "../types/tool";
 
 interface Props {
+  // The tool record displayed by this card.
   tool: Tool;
+  // Open the edit form for this tool.
   onEdit: (t: Tool) => void;
+  // Delete this tool from the inventory.
   onDelete: (id: string) => void;
+  // Open the assignment dialog for this tool.
   onAssign: (t: Tool) => void;
+  // Return this tool to the inventory.
   onReturn: (id: string) => void;
+  // Open the calibration completion dialog.
   onCalibrationOk: (tool: Tool) => void;
 }
 
+// Displays one tool's details, status, expiry alert, and available actions.
 const ToolCard: React.FC<Props> = ({ tool, onEdit, onDelete, onAssign, onReturn, onCalibrationOk }) => {
+  // Choose a badge color based on the tool's current status.
   const statusColor = tool.status === "available" ? "bg-green-100 text-green-800" :
                       tool.status === "in-use" ? "bg-yellow-100 text-yellow-800" :
                       tool.status === "for calibration" ? "bg-orange-100 text-orange-800" :
                       "bg-red-100 text-red-800";
+  // Get today's local date for the expiry comparison.
   const today = new Date();
+  // Format today's date to match the stored YYYY-MM-DD value.
   const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  // Mark the card as expired when an expiry date exists and has been reached.
   const isExpired = Boolean(tool.dateExpiry && tool.dateExpiry <= todayKey);
 
+  // Render the card and its conditional actions.
   return (
     <div className={`p-4 rounded-lg shadow-sm flex flex-col justify-between h-full border-l-4 ${isExpired ? "bg-red-50 border-red-500" : "bg-white border-transparent"}`}>
       <div>
