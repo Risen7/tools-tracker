@@ -33,7 +33,17 @@ const ToolCard: React.FC<Props> = ({ tool, onEdit, onDelete, onAssign, onReturn,
 
   // Render the card and its conditional actions.
   return (
-    <div className={`p-4 rounded-lg shadow-sm flex flex-col justify-between h-full border-l-4 ${isExpired ? "bg-red-50 border-red-500" : "bg-white border-transparent"}`}>
+    <div className={`relative p-4 rounded-lg shadow-sm flex flex-col justify-between h-full border-l-4 ${isExpired ? "bg-red-50 border-red-500" : "bg-white border-transparent"}`}>
+      {isExpired && (
+        <span
+          className="absolute top-3 right-3 inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white"
+          role="img"
+          aria-label="Expired tool alert"
+          title="This tool has expired and needs calibration"
+        >
+          !
+        </span>
+      )}
       <div>
         <h3 className="text-lg font-semibold text-gray-800">{tool.name}</h3>
         <p className="text-sm text-gray-500">{tool.category}{tool.serial && ` • ${tool.serial}`}</p>
@@ -58,7 +68,7 @@ const ToolCard: React.FC<Props> = ({ tool, onEdit, onDelete, onAssign, onReturn,
           {tool.status === "available" ? (
             <button onClick={() => onAssign(tool)} className="ml-2 inline-flex items-center px-2 py-1 bg-indigo-600 text-white text-sm rounded">Assign</button>
           ) : tool.status === "for calibration" ? (
-            <button onClick={() => onCalibrationOk(tool)} className="ml-2 inline-flex items-center px-2 py-1 bg-green-600 text-white text-sm rounded">Calibration OK</button>
+            <button onClick={() => onCalibrationOk(tool)} className="ml-2 inline-flex text-center items-center px-2 py-1 bg-green-600 text-white text-sm rounded">Calibration OK</button>
           ) : (
             <button onClick={() => onReturn(tool.id)} className="ml-2 inline-flex items-center px-2 py-1 bg-green-600 text-white text-sm rounded">Return</button>
           )}
